@@ -1,15 +1,16 @@
 import axios from 'axios';
-import store from '../redux/store';
-
+import * as Keychain from 'react-native-keychain';
 const api = axios.create({
   baseURL: 'https://aapsuj.accevate.co',
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });
 
-api.interceptors.request.use(config => {
-  const token = store.getState().auth.token;
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+
+api.interceptors.request.use(async config => {
+  const token = await Keychain.getGenericPassword();
+  console.log(token, 'token');
+  if (token) config.headers.Authorization = `Bearer ${token?.password}`;
   return config;
 });
 

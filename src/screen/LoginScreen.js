@@ -7,6 +7,9 @@ import {
     ActivityIndicator,
     StyleSheet,
     Image,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { postLogin } from '../redux/authSlice';
@@ -50,87 +53,99 @@ export default function Login({ navigation }) {
     };
 
     return (
-        <View style={styles.root}>
+        <KeyboardAvoidingView
+            style={styles.keyboardAvoidingCss}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <ScrollView
+                contentContainerStyle={styles.scrollCss}
+                keyboardShouldPersistTaps='handled'
+            >
+                <View style={styles.root}>
 
-            {/* ===== TOP COLOR AREA ===== */}
-            <View style={styles.topBg} />
+                    {/* ===== TOP COLOR AREA ===== */}
+                    <View style={styles.topBg} />
 
-            {/* ===== WHITE CARD ===== */}
-            <View style={styles.card}>
+                    {/* ===== WHITE CARD ===== */}
+                    <View style={styles.card}>
 
-                <Image source={IMAGES.logo} style={styles.logo} />
+                        <Image source={IMAGES.logo} style={styles.logo} />
 
-                <Text style={styles.title}>Welcome Back</Text>
-                <Text style={styles.sub}>Login to continue</Text>
+                        <Text style={styles.title}>Welcome Back</Text>
+                        <Text style={styles.sub}>Login to continue</Text>
 
-                {/* ===== USER ID ===== */}
-                <View style={styles.inputWrap}>
-                    <Text style={styles.label}>User ID</Text>
-                    <TextInput
-                        value={userid}
-                        onChangeText={t => {
-                            setUserid(t);
-                            setUErr('');
-                        }}
-                        placeholder="Enter your user id"
-                        style={[styles.input, uErr && styles.inputErr]}
-                    />
-                    {uErr ? <Text style={styles.err}>{uErr}</Text> : null}
-                </View>
+                        {/* ===== USER ID ===== */}
+                        <View style={styles.inputWrap}>
+                            <Text style={styles.label}>User ID</Text>
+                            <TextInput
+                                value={userid}
+                                onChangeText={t => {
+                                    setUserid(t);
+                                    setUErr('');
+                                }}
+                                placeholder="Enter your user id"
+                                style={[styles.input, uErr && styles.inputErr]}
+                            />
+                            {uErr ? <Text style={styles.err}>{uErr}</Text> : null}
+                        </View>
 
-                {/* ===== PASSWORD ===== */}
-                <View style={styles.inputWrap}>
-                    <Text style={styles.label}>Password</Text>
+                        {/* ===== PASSWORD ===== */}
+                        <View style={styles.inputWrap}>
+                            <Text style={styles.label}>Password</Text>
 
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            value={password}
-                            onChangeText={t => {
-                                setPassword(t);
-                                setPErr('');
-                            }}
-                            placeholder="Enter password"
-                            secureTextEntry={!showPass}
-                            style={[
-                                styles.input,
-                                { paddingRight: 60 },   // space for icon
-                                pErr && styles.inputErr,
-                            ]}
-                        />
+                            <View style={styles.inputContainer}>
+                                <TextInput
+                                    value={password}
+                                    onChangeText={t => {
+                                        setPassword(t);
+                                        setPErr('');
+                                    }}
+                                    placeholder="Enter password"
+                                    secureTextEntry={!showPass}
+                                    style={[
+                                        styles.input,
+                                        styles.inputPadding,   // space for icon
+                                        pErr && styles.inputErr,
+                                    ]}
+                                />
 
+                                <TouchableOpacity
+                                    style={styles.eyeInside}
+                                    onPress={() => setShowPass(!showPass)}>
+                                    <Text style={styles.eyeText}>
+                                        {showPass ? 'HIDE' : 'SHOW'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {pErr ? <Text style={styles.err}>{pErr}</Text> : null}
+                        </View>
+
+
+                        {error ? <Text style={styles.errCenter}>{error}</Text> : null}
+
+                        {/* ===== BUTTON ===== */}
                         <TouchableOpacity
-                            style={styles.eyeInside}
-                            onPress={() => setShowPass(!showPass)}>
-                            <Text style={styles.eyeText}>
-                                {showPass ? 'HIDE' : 'SHOW'}
-                            </Text>
+                            style={[styles.btn, loading && styles.btnOpacity]}
+                            onPress={submit}
+                            disabled={loading}>
+                            {loading ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.btnText}>Get OTP</Text>
+                            )}
                         </TouchableOpacity>
+
                     </View>
-
-                    {pErr ? <Text style={styles.err}>{pErr}</Text> : null}
                 </View>
-
-
-                {error ? <Text style={styles.errCenter}>{error}</Text> : null}
-
-                {/* ===== BUTTON ===== */}
-                <TouchableOpacity
-                    style={[styles.btn, loading && { opacity: 0.7 }]}
-                    onPress={submit}
-                    disabled={loading}>
-                    {loading ? (
-                        <ActivityIndicator color="#fff" />
-                    ) : (
-                        <Text style={styles.btnText}>Get OTP</Text>
-                    )}
-                </TouchableOpacity>
-
-            </View>
-        </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
+    keyboardAvoidingCss: { flex: 1 },
+    scrollCss: { flexGrow: 1 },
     root: {
         flex: 1,
         backgroundColor: '#f2f6ff',
@@ -194,7 +209,7 @@ const styles = StyleSheet.create({
         padding: 12,
         backgroundColor: '#fafafa',
     },
-
+    inputPadding: { paddingRight: 60 },
     inputErr: {
         borderColor: 'red',
     },
@@ -208,9 +223,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
 
-    eyeText: {
-        fontSize: 18,
-    },
+    // eyeText: {
+    //     fontSize: 18,
+    // },
 
     btn: {
         backgroundColor: colors.primary,
@@ -219,7 +234,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 10,
     },
-
+    btnOpacity: { opacity: 0.7 },
     btnText: {
         color: '#fff',
         fontSize: 16,

@@ -1,18 +1,22 @@
-import React, {useRef, useState} from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   ActivityIndicator,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {verifyOtp} from '../redux/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { verifyOtp } from '../redux/authSlice';
 import * as Keychain from 'react-native-keychain';
 import colors from '../utils/colors';
 
-export default function Otp({navigation}) {
-  const {userId, loading, error} = useSelector(s => s.auth);
+export default function Otp({ navigation }) {
+
+  const screenWidth = Dimensions.get('window').width;
+  const boxSize = (screenWidth - 40 - 40) / 6 - 6
+  const { userId, loading, error } = useSelector(s => s.auth);
   const dispatch = useDispatch();
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -32,7 +36,7 @@ export default function Otp({navigation}) {
     if (final.length === 6) {
 
       const res = await dispatch(
-        verifyOtp({userid: String(userId), otp: final}),
+        verifyOtp({ userid: String(userId), otp: final }),
       );
 
       if (res.payload?.status) {
@@ -63,6 +67,7 @@ export default function Otp({navigation}) {
               value={v}
               style={[
                 styles.box,
+                { width: boxSize, height: boxSize + 8 },
                 focusIndex === i && styles.boxFocus,
                 v && styles.boxFilled,
               ]}
@@ -135,8 +140,6 @@ const styles = StyleSheet.create({
   },
 
   box: {
-    width: 46,
-    height: 54,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#ccc',

@@ -45,7 +45,7 @@ export default function Dashboard({ navigation }) {
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={loadData} />
                 }
-                contentContainerStyle={{ paddingBottom: 30 }}
+                contentContainerStyle={styles.contentContainerStyle}
                 showsVerticalScrollIndicator={false}
             >
 
@@ -66,7 +66,7 @@ export default function Dashboard({ navigation }) {
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    style={{ marginTop: 15, paddingLeft: 16 }}
+                    style={styles.ScrollViewCss}
                 >
                     {d?.carousel?.map((img, i) => (
                         <Image
@@ -111,7 +111,7 @@ export default function Dashboard({ navigation }) {
 
                         <View style={styles.statLine}>
                             <Text style={styles.statLabel}>Due</Text>
-                            <Text style={[styles.statValue, { color: 'red' }]}>
+                            <Text style={[styles.statValue, styles.red]}>
                                 ₹{d?.amount?.due}
                             </Text>
                         </View>
@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 
+    contentContainerStyle: { paddingBottom: 30 },
     /* HEADER */
     headerCard: {
         margin: 16,
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
         color: 'red',
         fontWeight: '600',
     },
-
+    ScrollViewCss: { marginTop: 15, paddingLeft: 16 },
     /* BANNER */
     banner: {
         width: 280,
@@ -211,4 +212,5 @@ const styles = StyleSheet.create({
     statValue: {
         fontWeight: '600',
     },
+    red: { color: 'red' }
 });
